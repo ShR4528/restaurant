@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 const Featured = () => {
   return (
-    <div className=''>
+    <div className='w-screen overflow-x-scroll text-red-50'>
       {/* wrapper */}
       <div className=''>
         {/* single item */}
