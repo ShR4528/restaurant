@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { prisma } from '@/utils/connect';
 
-const prisma = new PrismaClient();
+import { NextResponse } from 'next/server';
 
 // fetch all categories
 export const GET = async () => {
