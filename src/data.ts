@@ -361,7 +361,7 @@ type Menu = {
   color: string;
 }[];
 
-export const menu: MenuType = [
+export const menu: Menu = [
   {
     id: 1,
     slug: 'pastas',
