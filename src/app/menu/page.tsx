@@ -3,8 +3,6 @@ import { MenuType } from '@/types/types';
 import Link from 'next/link';
 
 const getData = async () => {
-  console.log(getData);
-
   const res = await fetch('http://localhost:3000/api/categories', {
     cache: 'no-store',
   });
@@ -28,6 +26,7 @@ const MenuPage = async () => {
           <div className={`text-${category.color} p-8 w-1/2`}>
             <h1 className='uppercase font-bold text-3xl'>{category.title}</h1>
             <p className='text-sm my-8'>{category.desc}</p>
+
             <button
               className={`hidden 2xl:block bg-${category.color} text-${
                 category.color === 'black' ? 'white' : 'red-500'
