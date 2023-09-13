@@ -3,19 +3,18 @@ import Image from 'next/image';
 import { ProductType } from '@/types/types';
 import { featuredProducts } from '@/data';
 
-// const getData = async () => {
-//   const res = await fetch('http://localhost:3000/api/products', {
-//     cache: 'no-store',
-//   });
+const getData = async () => {
+  console.log(getData);
 
-//   if (!res.ok) {
-//     throw new Error('Failed');
-//   }
-//   return res.json();
-// };
+  const res = await fetch('http://localhost:3000/api/categories', {
+    cache: 'no-store',
+  });
 
-// const Featured = async () => {
-//   const featuredProducts: ProductType[] = await getData();
+  if (!res.ok) {
+    throw new Error('Failed');
+  }
+  return res.json();
+};
 
 const Featured = async () => {
   return (
