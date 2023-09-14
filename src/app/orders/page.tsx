@@ -1,12 +1,40 @@
-import React from 'react';
+'use client';
 
-const OrderPage = () => {
+import { OrderType } from '@/types/types';
+import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+const OrdersPage = () => {
+  const { data: session, status } = useSession();
+
+  const router = useRouter();
+  if (status === 'unauthenticated') {
+    router.push('/');
+  }
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ['orders'],
+    queryFn: () =>
+      fetch('http://localhost:3000/api/orders').then((res) => res.json()),
+  });
+
+  if (isLoading || status === 'loading') return 'Loading...';
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>, id: string) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const input = form.elements[0] as HTMLInputElement;
+    const status = input.value;
+  };
+
   return (
     <div className='p-4 lg:px-20 xl:px-40'>
       <table className='w-full border-separate border-spacing-4'>
         <thead>
           <tr className='text-left'>
-            <th className='hidden md:block'>Order</th>
+            <th className='hidden md:block'>Orders</th>
             <th>Date</th>
             <th>Price</th>
             <th className='hidden md:block'>Products</th>
@@ -14,31 +42,39 @@ const OrderPage = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className='text-sm md:text-base odd:bg-red-50'>
-            <td className='hidden md:block py-6 px-1'>223432142413135</td>
-            <td className='py-6 px-1'>9.4.2023</td>
-            <td className='py-6 px-1'>Price</td>
-            <td className='hidden md:block  py-6 px-1'>Big Burger</td>
-            <td className='py-6 px-1'>On the way</td>
-          </tr>
-          <tr className='text-sm md:text-base odd:bg-slate-400'>
-            <td className='hidden md:block py-6 px-1'>223432142413135</td>
-            <td className='py-6 px-1'>9.4.2023</td>
-            <td className='py-6 px-1'>Price</td>
-            <td className='hidden md:block  py-6 px-1'>Big Burger</td>
-            <td className='py-6 px-1'>On the way</td>
-          </tr>
-          <tr className='text-sm md:text-base odd:bg-red-50'>
-            <td className='hidden md:block py-6 px-1'>223432142413135</td>
-            <td className='py-6 px-1'>9.4.2023</td>
-            <td className='py-6 px-1'>Price</td>
-            <td className='hidden md:block  py-6 px-1'>Big Burger</td>
-            <td className='py-6 px-1'>On the way</td>
-          </tr>
+          {data.map((item: OrderType) => (
+            <tr className='text-sm md:text-base odd:bg-red-50' key={item.id}>
+              <td className='hidden md:block py-6 px-1'>{item.id}</td>
+              <td className='py-6 px-1'>
+                {item.createdAt.toString().slice(0, 10)}
+              </td>
+              <td className='py-6 px-1'>{item.price}</td>
+              <td className='hidden md:block  py-6 px-1'>
+                {item.products[0].title}
+              </td>
+              {session?.user.isAdmin ? (
+                <td>
+                  <form
+                    className='flex items-center justify-center gap-4'
+                    onSubmit={(e) => handleSubmit(e, item.id)}>
+                    <input
+                      placeholder={item.status}
+                      className='p-2 ring-1 ring-red-50 rounded-md'
+                    />
+                    <button className='bg-red-400 p-2 rounded-full'>
+                      <Image src='/edit.png' alt='' width={20} height={20} />
+                    </button>
+                  </form>
+                </td>
+              ) : (
+                <td className='py-6 px-1'>{item.status}</td>
+              )}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
   );
 };
 
-export default OrderPage;
+export default OrdersPage;
