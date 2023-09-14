@@ -6,10 +6,25 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (req: NextRequest) => {
   const session = await getAuthSession();
+
+  // const user = await prisma.user.findUnique({
+  //   where: {
+  //     email: session.user.email
+  //   }
+  // })
+
   if (session) {
     try {
-      if (session.user)
-        return new NextResponse(JSON.stringify(products), { status: 200 });
+      if (session.user.isAdmin) {
+        const orders = prisma.order.findMany();
+        return new NextResponse(JSON.stringify(orders), { status: 200 });
+      }
+      const orders = prisma.order.findMany({
+        where: {
+          userEmail: session.user.email!,
+        },
+      });
+      return new NextResponse(JSON.stringify(orders), { status: 200 });
     } catch (err) {
       console.log(err);
       return new NextResponse(
