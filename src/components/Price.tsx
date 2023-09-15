@@ -1,39 +1,40 @@
 'use client';
 
+import { ProductType } from '@/types/types';
 import React, { useEffect, useState } from 'react';
 
-type Props = {
-  price: number;
-  id: number;
-  options?: { title: string; additionalPrice: number }[];
-};
-
-const Price = ({ price, id, options }: Props) => {
-  const [total, setTotal] = useState(price);
+const Price = ({ product }: { product: ProductType }) => {
+  const [total, setTotal] = useState(product.price);
   const [quantity, setQuantity] = useState(1);
   const [selected, setSelected] = useState(0);
 
   useEffect(() => {
-    quantity * (options ? options[selected].additionalPrice : 0) + price;
-  }, [quantity, selected, price, options]);
+    setTotal(
+      quantity *
+        (product.options?.length
+          ? product.price + product.options[selected].additionalPrice
+          : product.price)
+    );
+  }, [quantity, selected, product]);
 
   return (
     <div>
-      <h2 className='text-2xl font-bold'>${total.toFixed(2)}</h2>
+      <h2 className='text-2xl font-bold'>${total}</h2>
       {/* options container */}
       <div className='flex gap-4'>
-        {options?.map((option, index) => (
-          <button
-            key={option.title}
-            className='min-w-[6rem] p-2 ring-1 ring-red-500 rounded-md'
-            style={{
-              background: selected === index ? 'red' : 'white',
-              color: selected === index ? 'white' : 'black',
-            }}
-            onClick={() => setSelected(index)}>
-            {option.title}
-          </button>
-        ))}
+        {product.options?.length &&
+          product.options?.map((option, index) => (
+            <button
+              key={option.title}
+              className='min-w-[6rem] p-2 ring-1 ring-red-500 rounded-md'
+              style={{
+                background: selected === index ? 'red' : 'white',
+                color: selected === index ? 'white' : 'black',
+              }}
+              onClick={() => setSelected(index)}>
+              {option.title}
+            </button>
+          ))}
       </div>
       {/* quantity container */}
       <div className='flex justify-between items-center'>

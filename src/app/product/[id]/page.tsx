@@ -1,9 +1,28 @@
 import React from 'react';
 import Image from 'next/image';
-import { singleProduct } from '@/data';
-import Price from '@/components/Price';
 
-const SingleProductPage = () => {
+import Price from '@/components/Price';
+import { ProductType } from '@/types/types';
+
+// Функция `getData` выполняет асинхронный запрос к серверу
+const getData = async (id: string) => {
+  // Отправляем GET-запрос к серверу для получения данных о продукте
+  const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+    cache: 'no-store', // Опция cache указывает, что данные не должны кэшироваться
+  });
+
+  // Если ответ от сервера не успешный (например, код ответа не 200 OK), выбрасываем ошибку
+  if (!res.ok) {
+    throw new Error('Failed'); // Выбрасываем ошибку с сообщением "Failed"
+  }
+
+  // Преобразуем полученные данные в формат JSON и возвращаем их
+  return res.json();
+};
+
+const SingleProductPage = async ({ params }: { params: { id: string } }) => {
+  const singleProduct: ProductType = await getData(params.id);
+
   return (
     <div className='p-4 lg:px-20 xl:px-40 h-screen flex flex-col justify-around text-red-400 md:flex-row md:gap-8 items-center'>
       {/* image container */}
@@ -23,11 +42,7 @@ const SingleProductPage = () => {
           {singleProduct.title}
         </h1>
         <p>{singleProduct.desc}</p>
-        <Price
-          price={singleProduct.price}
-          id={singleProduct.id}
-          options={singleProduct.options}
-        />
+        <Price product={singleProduct} />
       </div>
     </div>
   );

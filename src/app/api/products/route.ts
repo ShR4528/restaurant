@@ -8,8 +8,6 @@ export const GET = async (req: NextRequest) => {
 
   const cat = searchParams.get('cat');
 
-  console.log('GATEGORY ID:' + cat);
-
   try {
     const products = await prisma.product.findMany({
       where: {

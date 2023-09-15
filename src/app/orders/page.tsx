@@ -63,7 +63,9 @@ const OrdersPage = () => {
         </thead>
         <tbody>
           {data.map((item: OrderType) => (
-            <tr className='text-sm md:text-base odd:bg-red-50' key={item.id}>
+            <tr
+              className={`${item.status !== 'delivered && bg-red-50'}`}
+              key={item.id}>
               <td className='hidden md:block py-6 px-1'>{item.id}</td>
               <td className='py-6 px-1'>
                 {item.createdAt.toString().slice(0, 10)}
@@ -79,7 +81,7 @@ const OrdersPage = () => {
                     onSubmit={(e) => handleUpdate(e, item.id)}>
                     <input
                       placeholder={item.status}
-                      className='className="p-2 ring-1 ring-red-100 rounded-md'
+                      className='p-2 ring-1 ring-red-100 rounded-md'
                     />
                     <button className='bg-red-400 p-2 rounded-full'>
                       <Image src='edit.png' alt='' width={20} height={20} />
