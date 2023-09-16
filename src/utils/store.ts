@@ -21,11 +21,34 @@ export const userCartStore = create(
 
       // Действие для добавления товара в корзину
       addToCart(item) {
-        set((state) => ({
-          products: [...state.products, item], // Создаем новый массив товаров для избежания мутации
-          totalItems: state.totalItems + item.quantity, // Увеличиваем общее количество товаров
-          totalPrice: state.totalPrice + item.price, // Увеличиваем общую стоимость
-        }));
+        const products = get().products;
+        const productsInState = products.find(
+          (product) => product.id === item.id
+        );
+
+        if (productsInState) {
+          const updatedProducts = products.map(
+            (product) =>
+              product.id === productsInState.id
+                ? {
+                    ...item, // Создаем новый объект товара, объединяя его с новыми данными
+                    quantity: item.quantity + product.quantity, // Увеличиваем количество товаров в корзине
+                    price: item.price + product.price, // Увеличиваем общую стоимость товара
+                  }
+                : item // Если товар не нужно обновлять, оставляем его без изменений
+          );
+          set((state) => ({
+            products: updatedProducts, // Обновляем массив товаров
+            totalItems: state.totalItems + item.quantity, // Увеличиваем общее количество товаров в корзине
+            totalPrice: state.totalPrice + item.price, // Увеличиваем общую стоимость товаров в корзине
+          }));
+        } else {
+          set((state) => ({
+            products: [...state.products, item], // Создаем новый массив товаров для избежания мутации
+            totalItems: state.totalItems + item.quantity, // Увеличиваем общее количество товаров
+            totalPrice: state.totalPrice + item.price, // Увеличиваем общую стоимость
+          }));
+        }
       },
 
       // Действие для удаления товара из корзины
