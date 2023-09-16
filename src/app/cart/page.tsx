@@ -1,47 +1,37 @@
+'use client';
+import { userCartStore } from '@/utils/store';
 import Image from 'next/image';
-import React from 'react';
 
 const CartPage = () => {
+  const { products, totalItems, totalPrice, removeFromCart } = userCartStore();
+
   return (
     <div className='h-[calc(100vh-6rem)] md:h-[calc(100vh-9rem)] flex flex-col text-red-500 lg:flex-row'>
       {/* products container */}
       <div className='h-1/2 p-4 flex flex-col justify-center overflow-scroll lg:h-full lg:w-2/3 2xl:w-1/2 lg:px-20 xl:px-40'>
         {/* single item */}
-        <div className='flex items-center justify-between mb-4 '>
-          <Image src='/temporary/p1.png' alt='' width={100} height={100} />
-          <div className=''>
-            <h1 className='uppercase text-xl font-bold'>sicilian</h1>
-            <span>Large</span>
+        {products.map((item) => (
+          <div className='flex items-center justify-between mb-4 key={item.id}'>
+            {item.img && (
+              <Image src={item.img} alt='' width={100} height={100} />
+            )}
+            <div className=''>
+              <h1 className='uppercase text-xl font-bold'>{item.title}</h1>
+              <span>{item.optionTitle}</span>
+            </div>
+            <h2>{item.price}</h2>
+            <span className='cursor-pointer' onClick={() => removeFromCart}>
+              X
+            </span>
           </div>
-          <h2>$79.90</h2>
-          <span className='cursor-pointer'>X</span>
-        </div>
-        {/* single item */}
-        <div className='flex items-center justify-between mb-4 '>
-          <Image src='/temporary/p1.png' alt='' width={100} height={100} />
-          <div className=''>
-            <h1 className='uppercase text-xl font-bold'>sicilian</h1>
-            <span>Large</span>
-          </div>
-          <h2>$79.90</h2>
-          <span className='cursor-pointer'>X</span>
-        </div>
-        {/* single item */}
-        <div className='flex items-center justify-between mb-4 '>
-          <Image src='/temporary/p1.png' alt='' width={100} height={100} />
-          <div className=''>
-            <h1 className='uppercase text-xl font-bold'>sicilian</h1>
-            <span>Large</span>
-          </div>
-          <h2>$79.90</h2>
-          <span className='cursor-pointer'>X</span>
-        </div>
+        ))}
       </div>
+
       {/* payment container */}
       <div className='h-1/2 p-4 bg-fuchsia-50 flex flex-col gap-4 justify-center lg:h-full lg:w-1/3 2xl:w-1/2 2xl:gap-6'>
         <div className='flex justify-between '>
-          <span>Subtotal</span>
-          <span> $88.70</span>
+          <span>Subtotal ({totalItems} items)</span>
+          <span> {totalPrice}</span>
         </div>
         <div className='flex justify-between '>
           <span>Service Cost</span>

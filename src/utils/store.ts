@@ -26,7 +26,7 @@ export const userCartStore = create<CartType & ActionTypes>((set, get) => ({
   },
 
   // Действие для удаления товара из корзины
-  removeFrontCart(item) {
+  removeFromCart(item) {
     set((state) => ({
       products: state.products.filter((product) => product.id !== item.id), // Удаляем товар из массива по его id
       totalItems: state.totalItems - item.quantity, // Уменьшаем общее количество товаров
@@ -34,32 +34,3 @@ export const userCartStore = create<CartType & ActionTypes>((set, get) => ({
     }));
   },
 }));
-
-// import { ActionTypes, CartType } from '@/types/types';
-// import { create } from 'zustand';
-
-// const INITIAL_STATE = {
-//   products: [],
-//   totalItems: 0,
-//   totalPrice: 0,
-// };
-
-// export const userCartStore = create<CartType & ActionTypes>((set, get) => ({
-//   products: INITIAL_STATE.products,
-//   totalItems: INITIAL_STATE.totalItems,
-//   totalPrice: INITIAL_STATE.totalPrice,
-//   addToCart(item) {
-//     set((state) => ({
-//       products: [...state.products],
-//       quantity: state.totalItems + item.quantity,
-//       totalPrice: state.totalPrice + item.price,
-//     }));
-//   },
-//   removeFrontCart(item) {
-//     set((state) => ({
-//       products: state.products.filter((product) => product.id !== item.id),
-//       quantity: state.totalItems - item.quantity,
-//       totalPrice: state.totalPrice - item.price,
-//     }));
-//   },
-// }));
