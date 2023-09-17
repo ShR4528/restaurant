@@ -32,7 +32,29 @@ export const GET = async (req: NextRequest) => {
     });
   }
 };
+// create orders
+export const POST = async (req: NextRequest) => {
+  const session = await getAuthSession();
 
-export const POST = () => {
-  return new NextResponse('Hello', { status: 200 });
+  if (session) {
+    try {
+      const body = await req.json();
+      if (session.user) {
+        const order = await prisma.order.create({
+          data: body,
+        });
+        return new NextResponse(JSON.stringify(order), { status: 200 });
+      }
+    } catch (err) {
+      console.log(err);
+      return new NextResponse(
+        JSON.stringify({ message: 'SOMETHING went wrong' }),
+        { status: 500 }
+      );
+    }
+  } else {
+    return new NextResponse(JSON.stringify({ message: 'You are not auth.' }), {
+      status: 401,
+    });
+  }
 };
