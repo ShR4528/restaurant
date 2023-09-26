@@ -1,3 +1,4 @@
+import { read } from 'fs';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -30,7 +31,7 @@ const AddPage = () => {
   });
 
   const [options, setOptions] = useState<Option[]>([]);
-  const [file, setFile] = useState<FileList | null>();
+  const [file, setFile] = useState<File>();
   const router = useRouter();
 
   if (status === 'loading') {
@@ -56,15 +57,35 @@ const AddPage = () => {
     });
   };
 
-  const upload = async;
+  const handleChangeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    const item = (target.files as FileList)[0];
+    setFile(item);
+  };
+
+  const upload = async () => {
+    const data = new FormData();
+    data.append('file', file!);
+    data.append('upload_preset', 'restaurant');
+
+    const res = await fetch('https://api.cloudinary.com/v1_1/lamadev/image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'multipart/form-data' },
+      body: data,
+    });
+    const resData = await res.json();
+    return resData.url;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
+      const url = await upload();
       const res = await fetch('http://localhost:3000/api/products', {
         method: 'POST',
         body: JSON.stringify({
+          img: url,
           ...inputs,
           options,
         }),
